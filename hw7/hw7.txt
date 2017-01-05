@@ -1,0 +1,192 @@
+Oliver Fishstein
+
+
+PROCESSES:
+
+1.  Where is the data structure for the process table?
+
+	proc.c line 10 struct ptable
+
+2.  When there is a context switch from one process to another, where are
+    the values of the registers of the old process saved?
+
+	in the cpu->scheduler 
+	
+	line 286 proc.c
+
+3.  What are the possible states of a process?  Also, give a brief phrase
+    describing the purpose of each state.
+
+	proc.h line 52 enum prostate
+
+	UNUSED		- process table has a free slot
+	EMBRYO		- slot is to be used
+	SLEEPING	- currently sleeping
+	RUNNABLE	- ready to run
+	RUNNING 	- currently running
+	ZOMBIE 		- complete execution but still has an entry 
+			  in the process table
+
+4.  What is the function that does a context switch between two
+    processes?
+	swtch
+	
+	defined in swtch.s 
+	
+
+5.  Explain how the context switch function works.
+
+ 	It pushes the current CPU register onto the stack and saves the
+	stack pointer in *old
+
+6.  What function calls the context switch function, and explain in detail
+    what the calling function does.  (The doxygen hyper-linking
+    is not perfect here.  You may have to use 'grep' on
+       /course/cs3650/unix-xv6/* )
+
+   	The scheduler() (line 266 proc.c) function loops and calls the context switch function. 
+	It chooses a process to run, switches the context to start running the process, 
+	and then switches control back to the scheduler.
+
+
+
+PROCESS STARTUP:
+
+1.  Suppose a new program is going to start.  This requires a call to
+    the system call, exec().  On what lines does the operating system
+    create the first call frame, to be used by the user process's main()?
+
+	in userinit line 79 proc.c on line 88 with inituvm
+
+2.  [REVISED] The first call frame must have the values of the
+    local variables argc and argv.  Where is the value of argv found
+    in the exec() call?
+
+	line 11 exec.c
+
+3.  [REVISED] On what lines does the function modify the process table entry
+    with the new program for the current process?
+	lines 90 - 97 in proc.c
+
+SYSTEM CALLS:
+
+In class, we discussed how a system call (e.g., open()) is really
+a function in the C runtime library, libc.so, and that function
+then calls 'syscall()' with the integer for the 'open' system call.
+This is similar to when you use 'syscall'' in the MARS assembler,
+and you put the system call number in register $v0 before the call.
+
+In these questions, we will follow the chain of control from
+a user program that calls 'open()' to the code in 'libc' to the
+syscall in the kernel, and finally to the function in the kernel
+that actually does the work of the 'open()' system call.
+
+1.  The file grep.c makes a call to 'open()'.  The definition of 'open()'
+    is inside 'usys.S'.  It makes use of the macro 'SYSCALL'.
+    Note that a macro, '$SYS_ ## name', will expand to the concatenation
+    of 'SYS_' and the value of the macro parameter, "name".
+    The assembly instruction 'int' is the interrupt instruction in
+    x86 assembly.  The 'int' assembly instruction takes as an argument
+    an integer, 'T_SYSCALL'.
+        The code in usys.S is complex because it uses the C preprocessor.
+    But, roughly, SYSCALL(open) will expand to the assembly code
+    in lines 4 though 9 of usys.S, where the (x86 assembly) instruction:
+      "movl $SYS_ ## name, %eax"
+    expenads to:
+      "movl $SYS_open, %eax"
+    The value of SYS_open can be found in the include file, "syscall.h".
+
+    The instruction:
+      "int $T_SYSCALL"
+    uses information from "traps.h".  The "int" instruction is an
+    "interrupt" instruction.  It interrupts the kernel at the address
+    for interrupt number 64 (found in traps.).
+        If you do "grep SYS_open /course/cs3650/unix-xv6/*
+    it will lead you to:
+        /course/cs3650/unix-xv6/syscall.c
+    That will define the "syscalls" array, which is used by the
+    function "syscall".
+
+    Finally, here is the question:
+        Give the full details of how a call to 'open()' in grep.c will
+    call the function 'sys_open()' in sysfile.c, inside the operating
+    system kernel.
+
+	The call open() calls the macro for sys which then gets converted to and calls sys_open()after expansion.
+
+FILES AND FILE DESCRIPTORS:
+
+In class, we've talked about files and file descriptors.  We have
+not yet discussed i-nodes.  For these questions, you can think of
+an i-node as a location on disk that has the "table of contents"
+for all information about a file.
+
+In these questions, we will follow the chain of control from
+open() to a file descriptor, to a "file handle" (including the
+offset into the file), to the i-node.
+[ NOTE:  What I call a "file handle", UNIX xv6 calls a "struct file". ]
+
+1.  The function 'sys_open()' returns a file descriptor 'fd'.
+    To do this, it opens a new file handle 'filealloc()',
+    and it allocates a new file descriptor with 'fdalloc()'.
+    Where is the file descriptor allocated?  Also, you will see that
+    the file descriptor is one entry in an array.  What is the algorithm
+    used to choose which entry in the array to use for the new file descriptor?
+    [ Comment:  The name 'NOFILE' means "file number".  "No." is sometimes
+      used as an abbreviation for the word "number". ]
+	
+	The file descriptor is allocated to the next available slot in proc->ofile
+	line 39 in sysfile.c. The algorithm iterates through the file descriptors
+	until it gets to an available one marks that used and then returns fd. 
+
+2.  As you saw above, the file descriptor turned out to be an index
+    in an array.  What is the name of the array for which the file
+    descriptor is an index?  Also, what is the type of one entry in
+    that array.
+
+
+	proc->ofile (line 44 sysfile.c)
+	the type of one entry is a file.
+
+3.  The type that you saw in the above question is what I was calling
+    a "file handle" (with an offset into the file, etc.).
+    What is the name of the field that holds the offset into the file?
+    We saw it in the function 'sys_open()'.
+
+	f->off (line 327 sysfile.c)
+
+4.  Remember when we mentioned a call to 'filealloc()' above?
+    Since the return value of 'filealloc()' is only a file handle,
+    we need to initialize it.  Presumably, we will initialize it with
+    a file offset of 0.  What is the line number in 'sys_open()' where
+    we initialize the file offset to 0?
+	
+	f->off = 0 (line 327 sysfile.c)
+
+5.  The file handle type was initialized to 'FD_INODE'.  What are the
+    other types that it could have been initialized to?
+	
+	FD_NONE or FD_PIPE
+
+6.  Suppose a file handle had been initialized to FD_PIPE.  Find the
+    'struct' that hold sthe information about a pipe.  For each field
+    in that struct, Explain briefly (just a phrase) the purpose of that
+    field.
+
+	struct pipe line 12 pipe.c
+
+ 	struct spinlock lock; 	- the lock
+ 	char data[PIPESIZE];  	- pipe data
+     	uint nread;     	- number of bytes read
+     	uint nwrite;      	- number of bytes written
+  	int readopen;   	- bool read fd is still open
+  	int writeopen;  	- bool write fd is still open
+	
+
+7.  By examining the function 'sys_dup()', you can discover how a
+    system call to 'dup()' will manipulate both a file descriptor
+    and a "file handle".  Describe what it does in each of the
+    two cases.
+
+	it fetches the system call arg as a fd and the corresponding file 
+	and creates a second reference to the file. 

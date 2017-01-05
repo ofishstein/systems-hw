@@ -1,0 +1,48 @@
+                             HOMEWORK 1
+		   	due date: Friday., Sept. 16 (by end of day)
+
+For homework 1, you must write a simple program in assembly.
+The program is the C program:  hw1-factorial.c
+in the course directory.
+You can test the C program via:  gcc -o hw1 hw1-factorial.c ; ./hw1
+
+Your program must print a prompt, read an integer, and then write the
+answer, as is done in hw1-factorial.c .  Just as in hw1-factorial.c,
+your assembly program must use a recursive style.
+Page A-44 of the text shows how to use system calls.  The system calls
+that you need are:  print_str, read_int, print_int, and exit
+
+Note also that hw1-example* gives you a simple C program, along with
+two translations to Assembly.  (The first translation is short, but
+also takes some shortcuts.  The second version is closer to what
+you need for your homework.)
+[ hw1-example* should appear soon. ]
+
+In addition, you should include next to each line of the C source code as
+a comment just before the corresponding assembly code.
+For example:
+ add $t4, $t2, $t1 # x = y + z
+While comments are not strictly required, if your code is not clear or
+doesn't work, and if the grader cannot figure out why, then the grader
+can assume the worst in determining the grade.
+
+
+You must submit an on-line copy of your assembly source.
+To submit on-line, login to the UNIX system and do:
+    /course/cs3650f16/homework/submit-cs3650f16-hw1  hw1.s
+(assuming that this contains your assembly program, hw1.s;
+ hw1.asm is another popular filetype)
+
+The online version is due by the end of the due date (by midnight,
+or a few hours after midnight).
+
+======================================================================
+See the course home page for the Mars MIPS simulator.
+
+Note that page A-44 of Appendix A has a table of "system services"
+(system calls).  These allow you to do I/O.
+
+Further, the Mars simulator requires you to terminate your program
+by calling the "exit" system call.  It produces an error if your
+main() routine simply returns.  The text describes the Mars simulator
+under the older SPIM name (Appendix A.9).

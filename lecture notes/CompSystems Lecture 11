@@ -1,0 +1,115 @@
+CompSystems Lecture 11
+
+1 MW = 1 million watts
+
+1 MB = 10^6 or 2^20 bytes depending on context
+
+1 MiB = 2^20 bytes
+
+1 kiB = 2^10 bytes
+
+
+network speed = 10^6, memory addresses = 2^20
+
+
+	K 	M 	G 	T	P
+10^	3	6	9	12	15
+2^	10	20	30	40	50
+
+----------------------------------
+
+Direct Mapped Cache
+= 64 B cache line 
+= cache size - 64 K 
+= 32 bit memory address
+= 1024 cache slots
+
+
+							ignored by cache line
+|     tag    |    index    |  offset  |
+	16 bits		 10 bits      6 bits
+
+tag gets stored at every cache line
+
+index | data | tag | valid?
+0     |		 |	   |
+1     |		 |	   |
+2     |		 |	   |
+3     |		 |	   |
+4     | 	 |	   | 
+
+----------------------------------
+
+= 16 byte cache lines
+= 32 k cache size
+= 24 bit mem addresses 
+= 2048 cache slots
+
+							ignored by cache line
+|     tag    |    index    |  offset  |
+	9 bits		 11 bits      4 bits
+
+----------------------------------
+
+cache slots = cache size/ cache lines
+
+index size 	= size of cache line
+offset size = number of cache slots
+tag size 	= bits that are left in mem addresses
+
+tag 	= unique identifier for group of data
+index 	= cache slot
+offset 	= location in cache slot
+
+----------------------------------
+
+2-way set associative cache
+= 64 B cache line 
+= cache size - 64 K 
+= 32 bit memory address
+= 1024 cache slots
+= 512 sets
+
+| 	  tag	|	index	|	offset	|
+	17 bits		9 bits		6 bits
+
+
+index | data | tag | valid?
+0     |		 |	   |
+      |		 |	   |
+1     |		 |	   |
+      |		 |	   |
+2     | 	 |	   | 
+
+each index refers to two places 
+search for the correct location
+
+----------------------------------
+
+core i7 5xxx
+= 64 byte cache line
+= 32 KB cache size
+= 64 bit memory address, but really 48 bit memory addresses stored in 64 bits *
+= 8 way set associative cache
+= 512 slots
+= 64 sets
+
+* 48 bits in hardware but 64 in software - ignore the upper 16
+* 2^48 bits = 256 TB of RAM
+
+| 	  tag	|	index	|	offset	|
+	36 bits		6 bits		6 bits
+
+----------------------------------
+
+umass amherst cache address structure simulator
+
+----------------------------------
+
+when evicting data do we rewrite it or is it always a cache miss?
+- write it back out to memory to save it 
+- significantly slower
+two options:
+- just keep in RAM and set it as not valid in cache -> but no cache benefit for writes, write through
+- write back to the cache. eviction from the cache turns into a cache miss -> add a dirty bit. set it as dirty if just written to cache
+

@@ -1,0 +1,14 @@
+Computer Systems lecture 5
+
+for program longest
+
+name is type pointer to char
+4 pointers to char
+one pointer is one machine word
+
+pointer goes to an array which points to the string 
+
+
+stack smashing/buffer overflow = security problem
+- can overwrite return address by overwriting stack
+- causes bad values and segmentation fault 

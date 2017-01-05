@@ -1,0 +1,13 @@
+change Makefile to test parts 2 - 4:
+for part 2 change file to producer-consumer-part-2
+for part 3 change file to producer-consumer-part-3
+for part 4 change file to producer-consumer-part-4
+
+Answer these questions:
+
+Why does it deadlock?
+multiple threads are trying to access the same queue, and one is trying lock the same mutex while it is already locked which causes a deadlock
+
+How can you fix it?
+replace the mutexes with semaphores
+

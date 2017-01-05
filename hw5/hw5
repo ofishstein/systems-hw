@@ -1,0 +1,264 @@
+			     Homework 5
+			Due Friday, Oct. 28
+
+This homework is in two parts.
+Below, you will find three sections:
+  "Part 1", "Part 2", and "HINTS ON LEARNING PYTHON".
+
+========
+
+Part 1:
+
+    Go to http://codingbat.com/python and do the exercises.  In each case, your
+solution should be able to produce an answer using at most two lines of code
+in the body.  (Using a ';' to combine two lines doesn't count.)
+    The exercise sum67 is an exception.  You may use up to four lines in the
+body.
+    In order to produce solutions in only two lines of code, you will
+probably need to use list comprehensions.  There is a subdirectory
+/course/cs3650/python , which has information on getting started in
+Python, and in particular, on list comprehensions.  You'll also want
+to take advantage of such Python built-in functions as:
+ * len(), range()
+ * max(), min(), sum(), pow(), abs()
+ * all(), any()
+ * set(), list()    [Useful, because a set eliminates any duplicates in a list]
+ * sorted(), reversed()
+ * zip()
+ * etc.
+
+As an example, consider the following function, whose body is only one line:
+
+def sum_of_squares_of_odd_numbers(max_int):
+  return sum([i**2 for i in range(20) if i % 2 == 1])
+
+Now, it's your turn:
+
+    Python > List-1 > sum3
+    Python > List-1 > rotate_left3
+    Python > List-1 > max_end3
+    Python > List-1 > make_ends
+    Python > List-1 > has23
+    Python > List-2 > count_events
+    Python > List-2 > sum13
+    Python > List-2 > big_diff
+    Python > List-2 > sum67
+    Python > List-2 > centered_average
+    Python > List-2 > has22
+    Python > String-1 > extra_end 
+    Python > String-1 > without_end 
+    Python > String-2 > double_char
+    Python > String-2 > count_code
+    Python > String-2 > count_hi
+    Python > String-2 > end_other
+    Python > String-2 > cat_dog
+    Python > String-2 > xyz_there
+Part 2:
+  Re-read hw2.  There are two programs that you were asked to write in C:
+    Program 1 reports:  [lines, words, chars]
+    Program 2 reports the frequency count for:
+       ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', whitespace, other chars ]
+  Write Program 1 and Program 2 in Python.  In each case, you just need to
+    write one function, whose argument is a string.  It should return
+    the required list.  For me, the function for Program 1 required one
+    line in the body of the function.  For me, the function for Program
+    2 required two line in the body of the function.
+
+========
+Below, I provide hints for all of the exercies.
+
+
+URL: http://codingbat.com/python
+
+  Python > List-1 > sum3
+    Use:  sum(nums)
+
+  Python > List-1 > rotate_left3
+    Use splices and Java-style concatenate:  nums[1:], [nums[0]], and '+'
+
+  Python > List-1 > max_end3
+    Use:  max(nums[0], nums[1])
+
+  Python > List-1 > make_ends
+    One-liner:  return [nums[0], nums[-1]]
+
+  Python > List-1 > has23
+    One-liner:  return 2 in nums or 3 in nums
+
+  Python > List-2 > count_events
+    I liked using "list comprehension" for a one-liner:
+      return len( [x for x in nums if ...] )
+
+  Python > List-2 > sum13
+    I had to use a for loop here for the sake of a natural solution.
+    Standard:
+      sum = 0
+      for x in nums:
+        if x == 13:
+          return sum
+        else: ...
+    To do this with a list comprehension, use "for i in range(len(nums))"
+    and "if 13 not in nums[:i+1]".
+
+  Python > List-2 > big_diff
+     One-liner:  max(nums) and min(nums) work as expected.
+
+  Python > List-2 > sum67
+    I had to use a for loop here for the sake of a natural solution.
+    Standard:  for x in nums:
+    I'm allowing you to use four lines here.  But if you really want
+    to write this using a single list comprehensions, you could play with
+      expressions like "for i in range(len(nums))" and
+      "6 not in nums[:i+1]" and "i - nums[i::-1].index(6)"
+      (and compare to see whether 7 is in the range from the index
+       of the last 6 to the current i, or whether 7 appears after i)
+
+  Python > List-2 > centered_average
+    One-liner; Use:  sum(nums), max(nums), min(nums), len(nums)
+
+  Python > List-2 > has22
+    Note that Python allows repeated inequality comparison:
+      Example:  nums[i] == nums[i+1] == 2
+                nums[i] < nums[i+1] < nums[i+2]
+
+  Python > String-1 > extra_end 
+    Note:  int * list:  means repeat the list
+    One-liner:  return 3*str[-2:]
+
+  Python > String-1 > without_end 
+    One-liner:  return str[1:-1]
+
+  Python > String-2 > double_char
+    One-liner using "list comprehension"
+    Look at the result of:  [ c+c for c in str ]
+    Join the strings together:  ''.join(newString)
+    One-liner:  return str[1:-1]
+
+  Python > String-2 > count_code
+    I had to use a for loop here for the sake of a natural solution.
+    The solution can be a little shorter using splices:
+      for i in range(len(str)-3):
+        if str[i:i+1) == 'co' and str[i+3] == 'e':
+    By using list comprehensions, it can be still shorter.  Use
+      "for i in range(len(str))" and then try producing a list of
+      all string suffixes that begin with "co" with an expression like:
+              str[i:][0:1] == "co"
+      and then extend that into a solution.
+
+  Python > String-2 > count_hi
+    One-liner using the 'count' method for strings:
+    python>> help(str)
+    return str.count('hi')
+
+  Python > String-2 > end_other
+    Use:  a = a.lower() , and similarly for b, to ignore case
+    Then use a.endswith(...)
+    ALTERNATIVE:  use splicing:
+      What does a[-len(b):] return?  
+      What does b[-len(a):] return?  
+
+  Python > String-2 > cat_dog
+    One-liner using the 'count' method for strings
+
+  Python > String-2 > xyz_there
+    One-liner using the 'count' method for strings
+    Look at the number of times that '.xyz' and 'xyz' occur
+    Recall that the number 0 is a false value.
+    Finally, this web site wants you to convert your final answer
+      from int to bool, using coercion:  bool(3) --> True ; bool(0) --> False
+
+=======================================
+
+For hw2, we had to rewrite a C program that counts lines, words, and chars.
+(That C program is the same as the Linux command line utility:  wc)
+Now write a Python function
+  def wordCount(str):
+    return <add Python expression here>
+Where the expression should be a single line.  It should produce a Python list (array)
+of three elements:  number of lines in str, number of words in str, and number of chars.
+The string method split is ideal for this.  In Python, do:
+  help(str.split)
+Read the help document, and use 'split' and 'len' for a solution.
+Note that the Python syntax for the newline character is "\n" or '\n'.  (Both work.)
+
+For hw2, we had to rewrite a C program that counts the number of times each
+digit occurs, the number of times a whitespace occurs, and the number of other characters.
+It returns a list of 12 elements (a count for each of the ten digits, plus whitespace,
+plus other characters).
+Do this in Python.
+I did this twice.  My first attempt was closer to the original C code:
+  HINT:  The body of my Python function had 7 lines.  The first line was:
+	  result = 12*[0]
+  HINT:  To find out if a character is a digit, do:  python>> help(str)
+   This shows the string method, isdigit:
+	  'x'.isdigit() --> False ; '1'.isdigit() --> True
+   I used this inside a for loop.
+  HINT:  In C, we converted a character to ASCII.  To see how to do this
+   in Python, I did:  google convert character to ascii
+   As usual, stackoverflow.com had the best answer:
+     http://stackoverflow.com/questions/227459/ascii-value-of-a-character-in-python
+   It says:  ord('0') produces the ASCII value (as an int) for the character '0'
+  HINT:
+   In Python, a string with the three whitespace characters is:  whitespace = " \t\n"
+   The character c is whitespace if:  c in whitespace
+
+My second is attempt easier and so more natural in Python.  It had only
+two lines in the body:
+def mycount(str):
+  mycount = [ str.count(c) for c in "0123456789 \t\n" ]
+  return <add Python expression here for final answer>
+
+=======================================
+
+HINTS ON LEARNING PYTHON:
+
+1.  On Linux (and Mac??) you can write your Python code in a file,
+    and then execute it interactively.  For example,
+      python -i hw6.py
+      Python 2.7.3 (default, Feb 27 2014, 19:58:35) 
+      >>> print myhw5-sum67( [2, 3, 8, 6, 5, 7] )
+
+2.  Mars and C (and Java/Eclipse) have well-developed debuggers that provide:
+      next (next line of code), step (step into fnc), break, continue, etc.
+    So does Python.  To use the Python debugger do:
+      python -m pdb hw6.py
+      (Pdb) help
+      Documented commands (type help <topic>):
+      ========================================
+      EOF    bt         cont      enable  jump  pp       run      unt   
+      a      c          continue  exit    l     q        s        until 
+      alias  cl         d         h       list  quit     step     up    
+      args   clear      debug     help    n     r        tbreak   w     
+      b      commands   disable   ignore  next  restart  u        whatis
+      break  condition  down      j       p     return   unalias  where 
+      
+      (Pdb) step
+
+3.  We'll accept any answer that works.  But instead of writing code
+    like in Java or C, look for a more elegant "Pythonic" solution.
+    For example, in the "sum67" assignment (http://codingbat.com/prob/p108886):
+    you could write:
+
+    def sum67(nums):
+      while 6 in nums:
+        rest = nums[nums.index(6):]
+        nums = nums[:nums.index(6)] + rest[rest.index(7)+1:]
+      return sum(nums)
+
+    Or else you could write it like in Java or C:
+
+    def sum67(nums):
+      mysum = 0
+      seeing6 = False
+      for i in range(len(nums)):
+        if not seeing6:
+          if nums[i] == 6:
+            seeing6 = True
+          else:
+            mysum = mysum + nums[i]
+        else:  # if seeing6
+          if nums[i] == 7:
+            seeing6 = False
+      return mysum
+
+    Which code do you think is easier to read and maintain?

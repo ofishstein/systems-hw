@@ -1,0 +1,102 @@
+			The CPU Cache
+			Gene Cooperman
+
+##############################################################################
+# Copyright (c) 2016, Gene Cooperman
+# Permission to use is freely granted as long as this copyright notice remains.
+##############################################################################
+
+* Fully associative:
+  + a fully associative cache has a tag (i.e., address) and
+     data block.
+  + the bits of the CPU address are split into (tag, offset),
+     where the offset is the number of bits to specify a byte
+     in the data block, and the tag is the remaining bits.
+     EXAMPLE:  a data block of size 16 (2 to the power 4) has 4 offset bits;
+               the tag bits are the remaining 28 bits (32 - 4 = 28)
+  * Optimization 1:  a data block is often 64 bytes or more.
+  * Principle:  data blocks are atomic; we never split them.
+     Each data block will begin on a block-aligned address.
+     If a program reads from an array, the first address in the array
+     will cause the entire data block to be transferred to the CPU.
+     So, the next array address (if it is in the same data block)
+     will already be in the cache, and doesn't have to be transferred again.
+  * Optimization 2:  Instead of storing an entire CPU address, along with
+     the data block, in a cache line, we only need to store the
+     address tag, along with the data block.  The tag is the high address
+     bits (not including the offset bits).  So, there is less that we
+     need to store.
+
+* Disadvantage of a fully associative cache:
+   For each cache line, we need a separate comparator circuit.  In this way,
+   the CPU address tag is sent to each cache line,
+   and compared with the tag for that cache data block (in parallel).
+   But a comparator requires a lot of chip area (often more than the
+   data block itself).  So, while a fully associative cache is flexible
+   (a given data block may be deposited in any cache line at all, along
+   with the corresponding address tag), a fully associative cache can
+   have only a few cache lines (often 64 or less) due to its size.
+
+* Direct-mapped cache:
+   A direct-mapped cache requires only one comparator (total) instead
+   of one comparator per cache line.  It does this by also using
+   the index of the cache line.  (A cache can be viewed as an
+   "array of struct", where the struct includes a tag field, a
+   data block field, and perhaps a valid bit and a modified bit.)
+   The index refers to the array index in the "array of struct".
+     So, the CPU address is now split into three parts:  (tag, index, offset).
+   EXAMPLE: If a cache has 256 cache lines, then the index field will be
+            8 bits, since 256 = 2 to the power 8.  If we continue to use
+            a data block of 16 bytes (as above), then the offset consists of
+            4 bits.  So, the tag consists of 20 bits, since 32 - 8 - 4 = 20.
+      When a new address arrives from the CPU, it is split into
+    (tag, index, offset).  We look at the cache line for the given index,
+    and find its tag.  (In the language of C, we look at cache[index].tag .)
+    Now, we need only one comparator.  We compare the tag of the CPU address
+    with cache[index].tag.  If the tags are equal, then it is a HIT, and
+    we return cache[index].data to the CPU.  If the tags are not equal,
+    then we have a cache MISS, and the cache must obtain the data from
+    the RAM (or possibly from a secondary cache).
+
+* k-way set-associative cache:
+    In a k-way set-associative cache, we split the cache lines into
+    sets, with each set of size k.  So, instead of using a cache index
+    for each cache line, we will use a cache set number for each
+    cache set.
+      The set-associative cache logic begins similarly to the
+    direct-mapped cache.  A CPU address arrives, and it is split
+    into (tag, set #, offset).  We then look at all cache lines within
+    the given cache set.  If one of those cache lines within the set
+    has a matching tag (if CPU_tag == cache[index].tag, for some index
+    within our given set), then it is a HIT, and we return cache[index].data
+    to the CPU.  If none of the tags of that set are equal to our CPU tag,
+    then we have a cache MISS, and the cache must obtain the data from
+    the RAM (or possibly from a secondary cache).
+      Note that in this case, we need only k comparators (one comparator
+    for each cache line inside the given cache set).  Once we have chosen
+    a cache set (which is chosen based on the "cache #" from the CPU
+    address), we treat the cache lines of that cache set as if they were
+    a small, fully associative cache.  A cache set has k cache lines.
+    So, we have a small, fully associative cache of size k.
+    So, we need k comparators.
+
+Conclusion:
+      A fully associative cache is the most flexible, but it needs a lot
+    of chip area.  So, fully associative caches often have 64 cache
+    lines or less.
+      A direct-mapped cache can hold more cache lines.  But if two addresses
+    from the CPU happen to map to the same cache line (the same index),
+    then we can never hold both of those addresses in the cache at the
+    same time.  If the addresses are sequential (such as when we loop
+    through an array), then it is rare for two CPU addresses to collide
+    at the same cache index.  But other address patterns might trigger this
+    bad behavior.  CPU caches with up to a million cache lines are common.
+      A set-associative cache is a compromise between the two extremes
+    above.  We need only a small number of comparators (for example, k).
+    And we can permit up to k CPU addresses to collide at the same
+    cache index, without any bad behavior.  Some common set-associative
+    caches are implemented for k equal to 2, 4, or 8.
+
+
+Best wishes,
+- Prof. Cooperman
